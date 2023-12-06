@@ -1,14 +1,13 @@
 # configuration imports
-from champions_league.data.config.filepaths import groups_json_filepath, match_history_txt_filepath
+from football.champions_league.general.config.filepaths import groups_json_filepath, match_history_txt_filepath
 
 # other packages import
-from src.file_manager.JSON.read_file import ReadJsonFile
-from src.file_manager.TXT.write_file import WriteTextFile
+from shared_scripts.file_manager.JSON.read_file import ReadJsonFile
+from shared_scripts.file_manager.TXT.write_file import WriteTextFile
 
 # local scripts import
-from draws import PairDraws
-from champions_league.src.generating_score import GoalsCounter
-from champions_league.src.refresh_standings import UpdateStandings
+from shared_scripts import MakePairs
+from football.game.score_goal import GoalsCounter
 
 
 class GroupStage:
@@ -33,7 +32,7 @@ class GroupStage:
         {'Group A': [('Inter', 'Barcelona'), ('Inter', 'PSV'), ('Inter', 'Juventus'),
                     ('Barcelona', 'PSV'), ('Barcelona', 'Juventus'), ('PSV', 'Juventus')],}
         """
-        self.SCHEDULE = {key: PairDraws(list(value.keys())).get_pairs() for key, value in self.GROUP_STANDINGS.items()}
+        self.SCHEDULE = {key: MakePairs(list(value.keys())).get_pairs() for key, value in self.GROUP_STANDINGS.items()}
         return self
 
     @property
@@ -79,21 +78,3 @@ class SaveResults(PlayMatches):
         memo = str_match_history + 2 * '\n' + str_group_standings
         WriteTextFile.write(filepath=self.match_history_fp, content=memo)
         return memo
-
-
-class PlayMatchesMain(SaveResults):
-    def main(self):
-        self.get_groups()
-        self.schedule_matches()
-        self.play_matches()
-        self.GROUP_STANDINGS = UpdateStandings.sort_by_points(self.GROUP_STANDINGS)
-
-        return self.save_results()
-
-
-if __name__ == '__main__':
-    json_fp = '../../../' + groups_json_filepath
-    txt_fp = '../../../' + match_history_txt_filepath
-    matches = PlayMatchesMain(groups_standings_fp=json_fp, match_history_fp=txt_fp)
-    f = matches.main()
-    print(f)

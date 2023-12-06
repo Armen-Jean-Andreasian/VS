@@ -1,6 +1,6 @@
 from random import choice
-from champions_league.data.config.filepaths import groups_json_filepath
-from src.file_manager.JSON.write_file import WriteJsonFile
+from football.champions_league.general.config.filepaths import groups_json_filepath
+from shared_scripts.file_manager.JSON.write_file import WriteJsonFile
 
 
 class MakeGroups:
@@ -63,7 +63,7 @@ class MakeGroups:
         group_name = f"Group {group_letter}"
         return group_name
 
-    def make_group(self):
+    def make_groups(self):
         # problem is here
         while self.list_of_teams:
             if len(self.temp_group) < 4:
@@ -90,7 +90,7 @@ class MakeGroups:
 
 class MakeGroupsMain(MakeGroups):
     def draw(self) -> dict[str:list[str]]:
-        self.make_group()
+        self.make_groups()
         return self.get_results
 
     def save_results(self) -> None:
@@ -99,23 +99,8 @@ class MakeGroupsMain(MakeGroups):
 
 
 if __name__ == '__main__':
-    def concat_dict(d1, d2):
-        main_dict = dict()
-        main_dict.update(d1)
-        main_dict.update(d2)
-        return main_dict
-
-
-    def get_keys(d):
-        return list(d.keys())
-
-
-    from champions_league.data.data import TEAMS_TIER_ONE_16, TEAMS_TIER_TWO_16
-
-    teams = concat_dict(TEAMS_TIER_ONE_16, TEAMS_TIER_TWO_16)
-    teams_list = get_keys(teams)
-
-    grouper = MakeGroupsMain(teams=teams_list)
+    from football.data.data import all_teams
+    grouper = MakeGroupsMain(teams=all_teams)
     results = grouper.draw()
     grouper.save_results()
 

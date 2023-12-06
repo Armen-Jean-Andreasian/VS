@@ -1,5 +1,5 @@
 from draws import PairDraws
-from champions_league.data.data import MATCH_HISTORY, TEAMS_TIER_ONE_16
+from football.champions_league import MATCH_HISTORY, TEAMS_TIER_ONE_16
 from scripts import GoalsCounter, MatchHistory, UpdateStandings
 
 
